@@ -18,6 +18,12 @@ app.use(cors({ origin: process.env.CLIENT_URL || "*" }));
 app.use(express.json());
 app.use(morgan("dev"));
 
+app.get('/', (req, res) => {
+  res.json({
+    message: 'LearnPay API is running'
+  });
+});
+
 app.get("/api/health", (req, res) => res.json({ status: "ok", service: "learnpay-backend" }));
 
 app.use("/api/auth", authRoutes);
@@ -26,6 +32,7 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/virtual-accounts", virtualAccountRoutes);
+
 
 // 404 handler
 app.use((req, res) => res.status(404).json({ message: "Route not found" }));
@@ -38,3 +45,4 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 LearnPay backend running on port ${PORT}`));
+
