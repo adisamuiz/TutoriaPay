@@ -1,9 +1,9 @@
-import {addStudent} from '../models/student.models.js'
+import {addStudent, listStudents} from '../models/student.models.js'
 
 const getStudents = async (req, res) => {
     try{
-        
-        res.send('Welcome to the Tutoria-Pay backend API!');
+        const students = await listStudents()
+        res.json(students)
     }
     catch (error) {
 

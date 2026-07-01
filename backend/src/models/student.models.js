@@ -1,12 +1,12 @@
-import pool from '../config/db.config.js'
+import query from '../config/db.config.js'
 
 const addStudent = async (name) => {
     const queryText = `INSERT INTO students (uid, first_name) VALUES (gen_random_uuid(), $1)`
-    await pool.query(queryText, [name])
-    console.log(name)
+    await query(queryText, [name])
 }
-const getStudent = async () => {
+const listStudents = async () => {
     const queryText = `SELECT * FROM students`
-    await pool.query(queryText, [])
+    const res = await query(queryText, [])
+    return res.rows
 }
-export {addStudent};
+export {addStudent, listStudents};
