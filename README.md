@@ -1,4 +1,4 @@
-# LearnPay
+# TutoriaPay
 
 Full-stack student payment management application.
 
