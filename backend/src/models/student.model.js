@@ -1,9 +1,9 @@
 import query from '../config/db.config.js'
 
 const addStudent = async (studentData) => {
-    const queryText = `INSERT INTO students 
-    (id, full_name, email, phone_number) VALUES 
-    ($1, $2, $3, $4)`
+    const queryText = `INSERT INTO 
+    students (id, full_name, email, phone) 
+    VALUES ($1, $2, $3, $4)`
     const res = await query(queryText, [studentData.id, studentData.full_name, studentData.email, studentData.phone])
     return res.rows[0]
 }

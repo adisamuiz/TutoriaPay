@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import {
   Wallet,
@@ -11,6 +12,7 @@ import {
 } from "lucide-react";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [data, setData] = useState({
     enrollments: [],
     payments: [],
@@ -27,9 +29,16 @@ export default function Dashboard() {
     setLoading(true);
 
     try {
-      const res = await api.get("/students/me/dashboard");
-      setData(res.data);
-    } finally {
+      const studentId = ''; // Replace with the actual student ID, possibly from context or props
+      const res = await api.get(`/students/me/dashboard`);
+      console.log("Dashboard data:", res.data);
+      // setData(res.data);
+    } 
+    catch (error) {
+      console.error("Error loading dashboard:", error.res?.data?.message || error.message);
+      navigate("/login");
+    }
+    finally {
       setLoading(false);
     }
   }
@@ -93,7 +102,7 @@ export default function Dashboard() {
         <div className="mb-10">
 
           <h1 className="text-4xl font-extrabold text-slate-900">
-            Student Dashboard
+            Welcome back, {data.full_name}
           </h1>
 
           <p className="mt-2 text-slate-600">

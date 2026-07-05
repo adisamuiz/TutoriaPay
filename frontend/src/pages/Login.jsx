@@ -34,11 +34,12 @@ export default function Login() {
 
     try {
       //await loginStudent(form.email, form.password);
-      const { error, data } = await handleSignIn(form.email, form.password); // Call the Supabase sign-in function
+      const { error, data } = await handleSignIn(form); // Call the Supabase sign-in function
       if (error) return console.error(error); // Handle any errors from Supabase
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
+      console.error(err);
     } finally {
       setLoading(false);
     }
