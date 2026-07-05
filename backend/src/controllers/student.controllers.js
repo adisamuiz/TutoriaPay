@@ -11,31 +11,19 @@ const getStudents = async (req, res) => {
 }
 const getStudentById = async (req, res) => {
     try{
-        const {id} = req.params
-        if (!id) {
+        const studentId = req.user.id; // Assuming the authenticated user's ID is available in req.user.id
+
+        if (!studentId) {
             return res.status(400).json({ message: 'Student ID is required' });
         };
-        const student = await fetchStudentById(id);
+        const student = await fetchStudentById(studentId);
         if (!student) {
             return res.status(404).json({ message: 'Student not found' });
         };
-        res.json(student.full_name);
+        res.status(200).json(student);
     }
     catch (error) {
         res.status(500).json({ message: 'Error fetching student' });
-    }
-}
-const createStudent = async (req, res) => {
-    try{
-        const {name, email, phone} = req.body
-        if (!name || !email || !phone) {
-            return res.status(400).json({ message: 'Name, email, and phone are required' });
-        }
-        await addStudent(name, email, phone)
-        res.status(201).json({ message: 'Student created successfully' });
-    }
-    catch (error) {
-        res.status(500).json({ message: 'Error creating student' });
     }
 }
 const updateStudent = async (req, res) => {
@@ -55,4 +43,4 @@ const deleteStudent = async (req, res) => {
     }
 }
 
-export { getStudents, getStudentById, createStudent, updateStudent, deleteStudent };
+export { getStudents, getStudentById, updateStudent, deleteStudent };
