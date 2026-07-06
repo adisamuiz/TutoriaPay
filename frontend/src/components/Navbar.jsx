@@ -277,7 +277,8 @@ export default function Navbar() {
 
                   <Link
                     to="/dashboard"
-                    className="font-medium text-slate-600 transition hover:text-emerald-600"
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-lg px-4 py-3 hover:bg-slate-100"
                   >
                     Dashboard
                   </Link>
