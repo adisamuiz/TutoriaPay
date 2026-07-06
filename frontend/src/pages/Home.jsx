@@ -15,7 +15,7 @@ export default function Home() {
     <main className="bg-slate-50">
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-blue-50">
+      <section id="hero" className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-blue-50">
 
         <div className="absolute top-0 left-0 h-72 w-72 rounded-full bg-emerald-200 blur-3xl opacity-30"></div>
         <div className="absolute right-0 bottom-0 h-96 w-96 rounded-full bg-blue-200 blur-3xl opacity-30"></div>
@@ -209,7 +209,7 @@ export default function Home() {
 
       {/* FEATURES */}
 
-      <section className="mx-auto max-w-7xl px-6 pb-24">
+      <section id="features" className="mx-auto max-w-7xl px-6 pb-24">
 
         <div className="text-center">
 
@@ -280,7 +280,7 @@ export default function Home() {
 
       {/* CTA */}
 
-      <section className="bg-gradient-to-r from-emerald-600 to-blue-600 py-20">
+      <section id="cta" className="bg-gradient-to-r from-emerald-600 to-blue-600 py-20">
 
         <div className="mx-auto max-w-4xl text-center text-white px-6">
 
