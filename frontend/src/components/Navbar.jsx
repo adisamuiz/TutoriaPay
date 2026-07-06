@@ -152,6 +152,13 @@ export default function Navbar() {
                   Payment
                 </Link>
 
+                <Link
+                  to="/dashboard"
+                  className="font-medium text-slate-600 transition hover:text-emerald-600"
+                >
+                  Dashboard
+                </Link>
+
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-2 rounded-xl bg-red-50 px-5 py-2 font-medium text-red-600 transition hover:bg-red-100"
@@ -266,6 +273,13 @@ export default function Navbar() {
                     className="rounded-lg px-4 py-3 hover:bg-slate-100"
                   >
                     Payment
+                  </Link>
+
+                  <Link
+                    to="/dashboard"
+                    className="font-medium text-slate-600 transition hover:text-emerald-600"
+                  >
+                    Dashboard
                   </Link>
 
                   <button
