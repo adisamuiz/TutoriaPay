@@ -45,7 +45,7 @@ export default function PaymentInvoice() {
 
       */
 
-      const res = await api.get(`/payments/${paymentId}`);
+      const res = await api.get(`/payments/me/invoice`);
 
       setInvoice(res.data);
 

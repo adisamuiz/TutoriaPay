@@ -8,11 +8,10 @@ const enrollStudentInCourse = async (studentId, courseId) => {
 
 const getStudentEnrollments = async (studentId) => {
     const queryText = `SELECT title, price 
-    FROM enrollments 
-    JOIN courses ON enrollments.course_id = courses.id
-    WHERE student_id = $1`;
+        FROM enrollments 
+        JOIN courses ON enrollments.course_id = courses.id
+        WHERE student_id = $1`;
     const res = await query(queryText, [studentId]);
-    console.log(res.rows)
     return res.rows;
 }
 
