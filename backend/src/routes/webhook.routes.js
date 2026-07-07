@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
-import {authenticateUser, authorizeUser} from '../middlewares/auth.middleware.js';
+import { verifyAndReceiveWebhook } from "../controllers/webhook.controller.js";
 
-router.post('/nomba-payments',);
+router.post('/nomba-payments', verifyAndReceiveWebhook);
 
 export default router;
