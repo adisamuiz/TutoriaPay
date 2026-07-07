@@ -111,7 +111,7 @@ export default function Payment() {
 
       <div className="mx-auto max-w-7xl px-6 py-10">
 
-        <div className="mb-10">
+        <div className="mb-10 text-center">
 
           <h1 className="text-4xl font-extrabold text-slate-900">
             Payment Center
@@ -129,99 +129,10 @@ export default function Payment() {
           </div>
         )}
 
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="mx-auto max-w-4xl">
+           {/* PENDING PAYMENTS */}
 
-          {/* STUDENT */}
-
-          <div className="rounded-3xl bg-white p-8 shadow h-fit">
-
-            <h2 className="mb-6 text-2xl font-bold">
-              Student Information
-            </h2>
-
-            <div className="space-y-4">
-
-              <div>
-
-                <p className="text-sm text-slate-500">
-                  Full Name
-                </p>
-
-                <p className="font-semibold">
-                  {student?.full_name}
-                </p>
-
-              </div>
-
-              <div>
-
-                <p className="text-sm text-slate-500">
-                  Email
-                </p>
-
-                <p className="font-semibold">
-                  {student?.email}
-                </p>
-
-              </div>
-
-              <div>
-
-                <p className="text-sm text-slate-500">
-                  Phone
-                </p>
-
-                <p className="font-semibold">
-                  {student?.phone}
-                </p>
-
-              </div>
-
-            </div>
-
-            <hr className="my-8" />
-
-            <h3 className="mb-4 text-xl font-bold">
-              Payment Method
-            </h3>
-
-            <div className="space-y-4">
-
-              <button
-                onClick={() => setSelectedMethod("card")}
-                className={`w-full rounded-2xl border p-5 text-left transition ${
-                  selectedMethod === "card"
-                    ? "border-emerald-500 bg-emerald-50"
-                    : ""
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <CreditCard />
-                  Debit / Credit Card
-                </div>
-              </button>
-
-              <button
-                onClick={() => setSelectedMethod("bank")}
-                className={`w-full rounded-2xl border p-5 text-left transition ${
-                  selectedMethod === "bank"
-                    ? "border-emerald-500 bg-emerald-50"
-                    : ""
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Wallet />
-                  Bank Transfer
-                </div>
-              </button>
-
-            </div>
-
-          </div>
-
-                    {/* PENDING PAYMENTS */}
-
-          <div className="lg:col-span-2">
+          <div>
 
             {payments.length === 0 ? (
 
@@ -249,11 +160,11 @@ export default function Payment() {
 
                 <div className="rounded-3xl bg-white p-8 shadow">
 
-                  <div className="mb-8 flex items-center justify-between">
+                  <div className="mb-8 text-center">
 
                     <div>
 
-                      <h2 className="text-2xl font-bold">
+                      <h2 className="text-3xl font-bold">
                         Pending Course Payments
                       </h2>
 
@@ -263,13 +174,13 @@ export default function Payment() {
 
                     </div>
 
-                    <div className="rounded-xl bg-red-50 px-5 py-3">
+                    <div className="mx-auto mt-6 w-fit rounded-xl bg-red-50 px-6 py-4">
 
                       <p className="text-sm text-slate-500">
                         Outstanding
                       </p>
 
-                      <p className="text-2xl font-bold text-red-600">
+                      <p className="text-3xl font-bold text-red-600">
                         ₦{totalOutstanding.toLocaleString()}
                       </p>
 
@@ -426,108 +337,3 @@ export default function Payment() {
     </div>
   );
 }
-
-/*
-=========================================================
-BACKEND API CONTRACT
-=========================================================
-
-This page expects these endpoints.
-
----------------------------------------------------------
-1. Get Logged-in Student
----------------------------------------------------------
-
-GET /students/me
-
-Response
-
-{
-  "id":1,
-  "full_name":"John Doe",
-  "email":"john@example.com",
-  "phone":"+2348012345678"
-}
-
----------------------------------------------------------
-2. Get Pending Payments
----------------------------------------------------------
-
-GET /students/me/pending-payments
-
-Response
-
-[
-  {
-    "id":12,
-    "course":"Frontend Development",
-    "duration":"12 Weeks",
-    "amount":50000,
-    "status":"pending"
-  },
-  {
-    "id":15,
-    "course":"Backend Development",
-    "duration":"10 Weeks",
-    "amount":40000,
-    "status":"pending"
-  }
-]
-
----------------------------------------------------------
-3. Make Payment
----------------------------------------------------------
-
-POST /payments
-
-Request
-
-{
-   "enrollment_id":12,
-   "payment_method":"card"
-}
-
-Possible Response (Redirect)
-
-{
-   "payment_url":"https://payment-gateway-url"
-}
-
-OR
-
-{
-   "status":"paid"
-}
-
-=========================================================
-EXPECTED WORKFLOW
-
-Admin creates course
-        ↓
-Student logs in
-        ↓
-Courses page loads available courses
-        ↓
-Student enrolls
-        ↓
-Backend creates enrollment
-        ↓
-Backend creates pending payment
-        ↓
-Dashboard updates automatically
-        ↓
-Payment page lists pending payment(s)
-        ↓
-Student clicks Pay Now
-        ↓
-Payment gateway
-        ↓
-Payment successful
-        ↓
-Backend updates payment status
-        ↓
-Dashboard payment history updates
-        ↓
-Admin dashboard updates
-=========================================================
-*/
