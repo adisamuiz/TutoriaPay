@@ -2,6 +2,7 @@ import api from '../config/api.nomba.config.js'
 import config from '../config/env.config.js';
 import { getStudentEnrollments } from '../models/enrollment.model.js'
 import { fetchStudentById } from '../models/student.model.js'
+import { fetchInvoice, addInvoice, addVirtualAccount, fetchFromInvoiceAndVa } from '../models/payment.model.js';
 import { createVirtualAccount } from './nomba.service.js';
 
 const fetchStudentEnrollmentsById = async (studentId) => {
@@ -13,16 +14,34 @@ const fetchStudentEnrollmentsById = async (studentId) => {
     }
 }
 
-const generatePaymentInvoice = async (studentId) => {
+const fetchPaymentInvoice = async (studentId, expectedAmount) => {
     try {
-        const studentRes = await fetchStudentById(studentId);
-        const invoiceRes = await createVirtualAccount (studentId, studentRes.full_name);
+        const invoiceRes = await fetchFromInvoiceAndVa(studentId); // fetch all the details to be on the invoice from student invoice and VA data
+        if (!invoiceRes) {
+            const invoiceData = await generateInvoice(studentId, expectedAmount) // generate invoice and VA if non exists for the student
+            return invoiceData
+        }
+        //console.log(invoiceRes)
         return invoiceRes;
-        console.log(studentRes)
     } catch (error) {
         console.error(error.response?.data || error.message)
     }
 }
 
-export { fetchStudentEnrollmentsById, generatePaymentInvoice, };
+const generateInvoice = async (studentId, expectedAmount) => {
+    try {
+        const studentRes = await fetchStudentById(studentId); // fetch student data
+        await addInvoice(studentId, expectedAmount); // add student invoice details to database
+        const invoiceRes = await fetchInvoice(studentId); // fetch only invoice data to be used in VA creation
+        const vaRes = await createVirtualAccount (invoiceRes.account_ref, studentRes.full_name); // create nomba virtual account
+        await addVirtualAccount(studentId, vaRes); // Add VA data to the database
+        const invoiceData = await fetchFromInvoiceAndVa(studentId); // fetch data needed on the invoice from invoice and VA table
+        //console.log(vaRes)
+        return invoiceData;
+    } catch (error) {
+        console.error(error.response?.data || error.message);
+    }
+}
+
+export { fetchStudentEnrollmentsById, fetchPaymentInvoice };
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import {
   CreditCard,
@@ -12,11 +13,12 @@ import {
 } from "lucide-react";
 
 export default function Payment() {
+  const navigate = useNavigate();
   const [student, setStudent] = useState(null);
-  const [payments, setPayments] = useState([]);
+  const [enrollments, setEnrollments] = useState([]);
 
   const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(null);
+  const [processing, setProcessing] = useState(false);
 
   const [message, setMessage] = useState("");
   const [selectedMethod, setSelectedMethod] = useState("card");
@@ -29,13 +31,8 @@ export default function Payment() {
     setLoading(true);
 
     try {
-      const [paymentRes, /*studentRes*/] = await Promise.all([
-        api.get("/payments/me"), // make get request to payment api endpoint
-        //api.get("/payments/me/invoice"),
-      ]);
-      //console.log(studentRes)
-      //setStudent(studentRes.data);
-      setPayments(paymentRes.data || []);
+      const enrollmentRes = await api.get("/payments/me") // make get request to payment api endpoint to fetch enrolled courses
+      setEnrollments(enrollmentRes.data || []);
     } catch (error) {
       console.error(error);
 
@@ -48,52 +45,16 @@ export default function Payment() {
     }
   }
 
-  async function handlePayment(enrollment) {
-    setProcessing(enrollment.id);
+  async function handlePayment() {
+    setProcessing(true);
+    navigate("/payment/invoice");
     setMessage("");
-
-    try {
-      const response = await api.post("/payments", {
-        enrollment_id: enrollment.id,
-        payment_method: selectedMethod,
-      });
-
-      /**
-       * Backend can return:
-       *
-       * {
-       *   payment_url:"https://..."
-       * }
-       *
-       * OR
-       *
-       * {
-       *   status:"paid"
-       * }
-       */
-
-      if (response.data.payment_url) {
-        window.location.href = response.data.payment_url;
-        return;
-      }
-
-      setMessage("Payment completed successfully.");
-
-      loadPaymentData();
-    } catch (error) {
-      setMessage(
-        error.response?.data?.message ||
-          "Payment could not be completed."
-      );
-    } finally {
-      setProcessing(null);
-    }
   }
 
-  const totalOutstanding = payments.reduce(
-    (sum, item) => sum + Number(item.amount),
-    0
-  );
+  // const totalOutstanding = enrollments.price.reduce(
+  //   (sum, item) => sum + Number(item.amount),
+  //   0
+  // );  TO BE CALCULATED IN BACKEND
 
   if (loading) {
     return (
@@ -134,7 +95,7 @@ export default function Payment() {
 
           <div>
 
-            {payments.length === 0 ? (
+            {enrollments.length === 0 ? (
 
               <div className="rounded-3xl bg-white p-12 text-center shadow">
 
@@ -181,7 +142,7 @@ export default function Payment() {
                       </p>
 
                       <p className="text-3xl font-bold text-red-600">
-                        ₦{totalOutstanding.toLocaleString()}
+                        {/* ₦{totalOutstanding.toLocaleString()} */}
                       </p>
 
                     </div>
@@ -190,10 +151,10 @@ export default function Payment() {
 
                   <div className="space-y-6">
 
-                    {payments.map((payment) => (
+                    {enrollments.map((enrollment) => (
 
                       <div
-                        key={payment.id}
+                        key={enrollment.id}
                         className="rounded-2xl border p-6"
                       >
 
@@ -206,7 +167,7 @@ export default function Payment() {
                               <BookOpen className="text-emerald-600" />
 
                               <h3 className="text-xl font-bold">
-                                {payment.title}
+                                {enrollment.title}
                               </h3>
 
                             </div>
@@ -216,21 +177,21 @@ export default function Payment() {
                               <p className="text-slate-500">
                                 Duration:
                                 <span className="ml-2 font-medium text-slate-700">
-                                  {payment.duration}
+                                  {enrollment.duration}
                                 </span>
                               </p>
 
                               <p className="text-slate-500">
                                 Amount:
                                 <span className="ml-2 font-bold text-emerald-600">
-                                  ₦{Number(payment.price).toLocaleString()}
+                                  ₦{Number(enrollment.price).toLocaleString()}
                                 </span>
                               </p>
 
                               <div className="mt-3">
 
                                 <span className="rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-700">
-                                  {payment.status}
+                                  {enrollment.status}
                                 </span>
 
                               </div>
@@ -239,29 +200,6 @@ export default function Payment() {
 
                           </div>
 
-                          <button
-                            disabled={processing === payment.id}
-                            onClick={() => handlePayment(payment)}
-                            className="flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-8 py-4 font-semibold text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-70"
-                          >
-
-                            {processing === payment.id ? (
-                              <>
-                                <Loader2
-                                  size={18}
-                                  className="animate-spin"
-                                />
-                                Processing...
-                              </>
-                            ) : (
-                              <>
-                                Pay Now
-                                <ArrowRight size={18} />
-                              </>
-                            )}
-
-                          </button>
-
                         </div>
 
                       </div>
@@ -269,47 +207,32 @@ export default function Payment() {
                     ))}
 
                   </div>
+                  <button
+                    disabled={processing === true}
+                    onClick={() => handlePayment()}
+                    className="flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-8 py-4 font-semibold text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+
+                    {processing === true ? (
+                      <>
+                        <Loader2
+                          size={18}
+                          className="animate-spin"
+                        />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        Pay Now
+                        <ArrowRight size={18} />
+                      </>
+                    )}
+
+                  </button>
 
                 </div>
 
                 <div className="mt-8 rounded-3xl bg-white p-8 shadow">
-
-                  <h2 className="mb-6 text-2xl font-bold">
-                    Order Summary
-                  </h2>
-
-                  <div className="space-y-5">
-
-                    {payments.map((payment) => (
-
-                      <div
-                        key={payment.id}
-                        className="flex justify-between"
-                      >
-
-                        <span>{payment.course}</span>
-
-                        <span className="font-semibold">
-                          ₦{Number(payment.amount).toLocaleString()}
-                        </span>
-
-                      </div>
-
-                    ))}
-
-                    <hr />
-
-                    <div className="flex justify-between text-2xl font-bold">
-
-                      <span>Total Outstanding</span>
-
-                      <span className="text-emerald-600">
-                        ₦{totalOutstanding.toLocaleString()}
-                      </span>
-
-                    </div>
-
-                  </div>
 
                   <div className="mt-8 flex items-center gap-2 text-sm text-slate-500">
 

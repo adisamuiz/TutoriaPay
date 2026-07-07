@@ -52,6 +52,7 @@ const runBackgroundTokenManager = async () => {
             const refreshRes = await refreshAccessToken(cachedAccessToken, cachedRefreshToken)
             cachedAccessToken = refreshRes.access_token
             cachedRefreshToken = refreshRes.refresh_token
+            //console.log('newToken')
         }, 1500000) 
     }
     catch (error) {
@@ -66,23 +67,25 @@ const fetchAccessToken = async () => {
     return cachedAccessToken;
 }
 
-const createVirtualAccount = async (studentId, studentName) => {
+// Create Nomba virtual account
+const createVirtualAccount = async (account_ref, studentName) => {
     try {
         const subAccountId = config.NOMBA_SUB_ACCOUNT_ID
-        const res = await api.post(`v1/accounts/virtual/${subAccountId}`, {
-            'accountRef': studentId,
-            'accountName': studentName,
+        const res = await api.post(`/v1/accounts/virtual/${subAccountId}`, {
+            accountRef: account_ref,
+            accountName: studentName,
         })
         const vaRes = res.data;
         if (vaRes.code !== '00') throw new Error('Virtual account creation failed');
-        return vaRes
+        console.log(vaRes.data)
+        return vaRes.data
     } catch (error) {
         console.error(error.response?.data || error.message)
     }
 }
 
 const fetchVirtualAccount = async (identifier) => {
-    const res = await api.delete(`v1/accounts/virtual/${identifier}`)
+    const res = await api.delete(`/v1/accounts/virtual/${identifier}`)
     console.log(res.data)
     return res.data;
 }

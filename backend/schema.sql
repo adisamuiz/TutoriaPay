@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS students (
     email VARCHAR(255) UNIQUE CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$'),
     phone VARCHAR(20) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(), 
 );
 
 CREATE TABLE IF NOT EXISTS courses (
@@ -26,36 +26,35 @@ CREATE TABLE IF NOT EXISTS enrollments (
     CONSTRAINT unique_student_course UNIQUE (student_id, course_id)
 );
 
+CREATE TYPE invoice_status AS ENUM ('unpaid', 'partially_paid', 'paid');
+
+CREATE TABLE IF NOT EXISTS invoices (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    student_id UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    expected_amount DECIMAL(12, 2) NOT NULL CHECK (expected_amount >= 0),
+    amount_paid DECIMAL(12, 2) DEFAULT 0.00 CHECK (amount_paid >= 0),
+    account_ref UUID DEFAULT uuid_generate_v4(),
+    status invoice_status DEFAULT 'unpaid',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS virtual_accounts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     student_id UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     account_number VARCHAR(15) NOT NULL UNIQUE,
     bank_name VARCHAR(100) NOT NULL,
     account_name VARCHAR(150) NOT NULL,
-    account_ref VARCHAR(100) NOT NULL UNIQUE, -- Nomba account reference
+    account_ref UUID NOT NULL, -- Nomba account reference
     created_at TIMESTAMPTZ DEFAULT NOW(),
     CONSTRAINT unique_student_va UNIQUE (student_id)
-);
-
-CREATE TYPE invoice_status AS ENUM ('unpaid', 'partially_paid', 'paid');
-
-CREATE TABLE IF NOT EXISTS invoices (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    enrollment_id INT NOT NULL REFERENCES enrollments(id) ON DELETE CASCADE,
-    student_id UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
-    total_amount DECIMAL(12, 2) NOT NULL CHECK (total_amount >= 0),
-    amount_paid DECIMAL(12, 2) DEFAULT 0.00 CHECK (amount_paid >= 0),
-    status invoice_status DEFAULT 'unpaid',
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    CONSTRAINT check_payment_bounds CHECK (amount_paid <= total_amount)
 );
 
 CREATE TABLE IF NOT EXISTS payments (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     invoice_id UUID NOT NULL REFERENCES invoices(id) ON DELETE RESTRICT,
     amount_received DECIMAL(12, 2) NOT NULL CHECK (amount_received > 0),
-    payment_ref VARCHAR(150) NOT NULL UNIQUE, -- Crucial: Avoid processing same webhook twice
+    payment_ref TEXT NOT NULL UNIQUE, -- Crucial: Avoid processing same webhook twice
     raw_webhook_payload JSONB, -- Stores full payload for archival audit trails
     paid_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -67,7 +66,7 @@ CREATE TABLE IF NOT EXISTS wallets (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS wallet_transactions (
+CREATE TABLE IF NOT EXISTS transactions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     wallet_id UUID NOT NULL REFERENCES wallets(id) ON DELETE CASCADE,
     amount DECIMAL(12, 2) NOT NULL CHECK (amount > 0),

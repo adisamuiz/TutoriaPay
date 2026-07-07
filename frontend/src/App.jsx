@@ -15,7 +15,7 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 
 // Future Pages
-import PaymentHistory from "./pages/PaymentHistory";
+import PaymentInvoice from "./pages/PaymentInvoice";
 import Profile from "./pages/Profile";
 // import NotFound from "./pages/NotFound";
 
@@ -69,9 +69,9 @@ export default function App() {
 
           
           <Route
-            path="/payments"
+            path="/payment/invoice"
             element={
-                <PaymentHistory />
+                <PaymentInvoice />
             }
           />
 

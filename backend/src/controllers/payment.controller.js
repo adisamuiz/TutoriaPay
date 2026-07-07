@@ -1,4 +1,4 @@
-import { fetchStudentEnrollmentsById, generatePaymentInvoice } from "../services/payment.service.js";
+import { fetchStudentEnrollmentsById, fetchPaymentInvoice } from "../services/payment.service.js";
 
 const fetchStudentEnrollments = async(req, res) => {
     try {
@@ -22,10 +22,12 @@ const getPaymentInvoice = async(req, res) => {
         if (!studentId) {
             return res.status(400).json({ message: 'Student ID is required' });
         };
-        const invoiceRes = await generatePaymentInvoice(studentId)
+        const amount = 1000 //placeholder for expectedamount
+        const invoiceRes = await fetchPaymentInvoice(studentId, amount)
         if (!invoiceRes) {
             return res.status(404).json({ message: 'invoice not found' });
         };
+        console.log(invoiceRes) 
         res.status(200).json(invoiceRes);
     } catch (error) {
         res.status(500).json({ message: 'Error getting invoice' });
