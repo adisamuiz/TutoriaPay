@@ -2,7 +2,7 @@ import api from '../config/api.nomba.config.js'
 import config from '../config/env.config.js';
 import { getStudentEnrollments } from '../models/enrollment.model.js'
 import { fetchStudentById } from '../models/student.model.js'
-import { fetchInvoice, addInvoice, addVirtualAccount, fetchFromInvoiceAndVa } from '../models/payment.model.js';
+import { fetchInvoice, addInvoice, addVirtualAccount, fetchInvoiceAndVa } from '../models/payment.model.js';
 import { createVirtualAccount } from './nomba.service.js';
 
 const fetchStudentEnrollmentsById = async (studentId) => {
@@ -16,7 +16,7 @@ const fetchStudentEnrollmentsById = async (studentId) => {
 
 const fetchPaymentInvoice = async (studentId, expectedAmount) => {
     try {
-        const invoiceRes = await fetchFromInvoiceAndVa(studentId); // fetch all the details to be on the invoice from student invoice and VA data
+        const invoiceRes = await fetchInvoiceAndVa(studentId); // fetch all the details to be on the invoice from student invoice and VA data
         if (!invoiceRes) {
             const invoiceData = await generateInvoice(studentId, expectedAmount) // generate invoice and VA if non exists for the student
             return invoiceData
@@ -35,7 +35,7 @@ const generateInvoice = async (studentId, expectedAmount) => {
         const invoiceRes = await fetchInvoice(studentId); // fetch only invoice data to be used in VA creation
         const vaRes = await createVirtualAccount (invoiceRes.account_ref, studentRes.full_name); // create nomba virtual account
         await addVirtualAccount(studentId, vaRes); // Add VA data to the database
-        const invoiceData = await fetchFromInvoiceAndVa(studentId); // fetch data needed on the invoice from invoice and VA table
+        const invoiceData = await fetchInvoiceAndVa(studentId); // fetch data needed on the invoice from invoice and VA table
         //console.log(vaRes)
         return invoiceData;
     } catch (error) {

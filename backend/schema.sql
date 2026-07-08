@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS payments (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     invoice_id UUID NOT NULL REFERENCES invoices(id) ON DELETE RESTRICT,
     amount_received DECIMAL(12, 2) NOT NULL CHECK (amount_received > 0),
-    payment_ref TEXT NOT NULL UNIQUE, -- Crucial: Avoid processing same webhook twice
+    payment_ref TEXT NOT NULL UNIQUE, -- To avoid processing same webhook twice
     raw_webhook_payload JSONB, -- Stores full payload for archival audit trails
     paid_at TIMESTAMPTZ DEFAULT NOW()
 );
