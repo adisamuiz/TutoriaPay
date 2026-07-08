@@ -26,7 +26,7 @@ export default function Dashboard() {
     setLoading(true);
     try {
       const res = await api.get(`/students/me/dashboard`);
-       console.log("Dashboard data:", res.data);
+       //console.log("Dashboard data:", res.data);
        setData(res.data);
     } 
     catch (error) {
@@ -227,10 +227,10 @@ export default function Dashboard() {
 
                 </div>
 
-                  <div className="flex items-center gap-2 rounded-xl bg-emerald-50 px-5 py-3 text-emerald-700">
+                  {/* <div className="flex items-center gap-2 rounded-xl bg-emerald-50 px-5 py-3 text-emerald-700">
                     <CheckCircle2 size={18} />
-                    {/* Payment Completed */}
-                  </div>
+                    Payment Completed
+                  </div> */}
               </div>
 
             ))}

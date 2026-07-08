@@ -7,9 +7,21 @@ const fetchStudentDashboardInformation = async (studentId) => {
         const studentRes = await fetchStudentById(studentId);
         const enrollmentRes = await fetchStudentEnrollmentsById(studentId);
         const invoiceRes = await fetchInvoice(studentId); 
-        const walletBalance = await fetchWallet(studentId)            
-        const outstandingFee = Number(invoiceRes.expected_amount) - Number(invoiceRes.amount_paid);
-        return{
+        const walletBalance = await fetchWallet(studentId)     
+        if (!enrollmentRes || !invoiceRes){
+            return {
+                student: studentRes,
+                enrollment: enrollmentRes,
+                payments: {
+                    totalFee: 0.00,
+                    totalPaid: 0.00,
+                    outstanding: 0.00,
+                    wallet: 0.00
+                }
+            };
+        }       
+        const outstandingFee = (Number(invoiceRes.expected_amount) - Number(invoiceRes.amount_paid)) || 0;
+        return {
             student: studentRes,
             enrollment: enrollmentRes,
             payments: {

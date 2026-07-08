@@ -21,6 +21,7 @@ const getStudentDashboardInfo = async (req, res) => {
         if (!student) {
             return res.status(404).json({ message: 'Student not found' });
         };
+        //console.log(student)
         res.status(200).json(student);
     }
     catch (error) {
