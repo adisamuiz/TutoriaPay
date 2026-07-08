@@ -1,5 +1,6 @@
-import config from '../config/env.config.js'
-import crypto from 'crypto'
+import config from '../config/env.config.js';
+import crypto from 'crypto';
+import { reconcilePayment } from '../services/webhook.service.js';
 
 const verifyAndReceiveWebhook = async (req, res) => {
     try{
@@ -17,8 +18,11 @@ const verifyAndReceiveWebhook = async (req, res) => {
         if (expectedSignature !== nombaSignature) {
             return res.status(401).json({ message: 'Unauthorized payload' });
         }
-        
-        console.log('payload: ', json.stringify(req.body));
+        const { event_type, payloadData } = req.body
+        if (event_type == 'payment_success') {
+            await reconcilePayment(payloadData)
+        }
+        res.status(200).json(event_type)
     } catch {
         res.status(500).json({ message: 'Coould not resolve web hook' });
     }
