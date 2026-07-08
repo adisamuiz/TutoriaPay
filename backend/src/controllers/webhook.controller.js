@@ -4,7 +4,7 @@ import { reconcilePayment } from '../services/webhook.service.js';
 
 const verifyAndReceiveWebhook = async (req, res) => {
     try{
-        const nombaSignature = req.header['nomba-signature'];
+        const nombaSignature = req.headers['nomba-signature'];
         if (!nombaSignature) {
             return res.status(401).json({ message: 'Missing signature' });
         }
