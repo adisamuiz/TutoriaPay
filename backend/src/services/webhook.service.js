@@ -10,13 +10,13 @@ const reconcilePayment = async (payloadData) => {
             return;
         }
         console.log('account_ref:', aliasAccountReference)
-        const virtualAccountRes = fetchVirtualAccount(aliasAccountReference);
+        const virtualAccountRes = await fetchVirtualAccount(aliasAccountReference);
         console.log('virtual account:', virtualAccountRes)
         if (!virtualAccountRes) {
             console.log('No virtual account detected')
             throw new Error('Anonymous payment detected');
         };
-        const studentId = virtualAccountRes.studentId;
+        const studentId = virtualAccountRes.student_id;
         const invoiceRes = await fetchInvoice(studentId);
         if (!invoiceRes) {
             console.log('No invoice')
@@ -41,7 +41,7 @@ const reconcilePayment = async (payloadData) => {
             await updateInvoice(totalPaid, status, aliasAccountReference);
             return;
         }
-        const status = 'Partially paid'
+        const status = 'partially_paid'
         await updateInvoice(totalPaid, status, aliasAccountReference);
     } 
     catch (error) {
