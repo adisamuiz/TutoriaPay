@@ -26,7 +26,7 @@ const getPaymentInvoice = async(req, res) => {
         if (!invoiceRes) {
             return res.status(404).json({ message: 'invoice not found' });
         };
-        console.log(invoiceRes) 
+        //console.log(invoiceRes) 
         res.status(200).json(invoiceRes);
     } catch (error) {
         res.status(500).json({ message: 'Error getting invoice' });

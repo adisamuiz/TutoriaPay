@@ -9,6 +9,11 @@ import paymentRoutes from './routes/payment.routes.js';
 import webhookRoutes from './routes/webhook.routes.js'
 
 const app = express();
+app.use((req, res, next) => {
+    console.log(`➡️ Incoming Request: ${req.method} ${req.url}`);
+    next();
+});
+
 app.use('/api/v1/webhooks', webhookRoutes)
 
 app.use(cors());
