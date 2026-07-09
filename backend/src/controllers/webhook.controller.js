@@ -20,6 +20,7 @@ const verifyAndReceiveWebhook = async (req, res) => {
             .digest('base64');
         console.log('Hash:', expectedSignature)
         if (expectedSignature !== nombaSignature) {
+            console.log('Bad signature')
             return res.status(401).json({ message: 'Unauthorized payload' });
         }
         const { event_type, payloadData } = req.body
