@@ -23,7 +23,7 @@ export default function PaymentInvoice() {
 
   useEffect(() => {
     loadInvoice();
-  }, [paymentId]);
+  }, []);
 
   async function loadInvoice() {
     setLoading(true);
@@ -49,8 +49,8 @@ export default function PaymentInvoice() {
     setProcessing(true);
 
     try {
-      const response = await api.post(
-        `/payments/${paymentId}/pay`
+      const response = await api.get(
+        `/payments/me/status`
       );
 
       if (response.data.payment_url) {
@@ -71,12 +71,13 @@ export default function PaymentInvoice() {
     } catch (error) {
       console.error(error);
       setMessage(
-        error.response?.data?.message ||
-          "Unable to confirm payment."
+        error.response?.data?.message 
+          //"Unable to confirm payment."
       );
 
     } finally {
       setProcessing(false);
+      navigate("/dashboard");
     }
   }
 
@@ -302,7 +303,7 @@ export default function PaymentInvoice() {
                 ) : (
 
                   <>
-                    I Have Paid Already
+                    I Have Paid
                   </>
 
                 )}
